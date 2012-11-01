@@ -1,0 +1,2 @@
+name:CrashAutoRestart
+main:eu.icecraft_mc.CrashAutoRestart.CrashAutoRestart
