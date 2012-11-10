@@ -14,15 +14,13 @@ public class CrashAutoRestart extends Module {
     }
 
     @Override
-    public void onStderrString(String raw) {
-        String err = raw.replaceFirst(".*?\\s.*?\\s", "");
-        if (!err.startsWith("[SEVERE] ")) return;
-        err = err.replaceFirst("[SEVERE]\\s", "");
-        if (err.startsWith("Encountered an unexpected exception")) {
-            System.out.println("Restarting due to server crash");
+    public void onStderrString(String err) {
+        String noTimestamp = err.replaceFirst(".*\\[", "[");
+        if (!noTimestamp.startsWith("[SEVERE] ")) return;
+        if (noTimestamp.startsWith("[SEVERE] Encountered an unexpected exception ")) {
+            System.err.println("Restarting due to server crash");
             try {
                 List<String> linesToExecute = readAllLines("toolkit/crash_lines.txt");
-
                 if (linesToExecute != null) {
                     Field consoleField = Wrapper.class.getDeclaredField("console");
                     consoleField.setAccessible(true);
@@ -30,7 +28,7 @@ public class CrashAutoRestart extends Module {
                     for (String line : linesToExecute)
                         if (line.startsWith(".")) Wrapper.getInstance().parseConsoleInput(line.substring(1));
                         else {
-                            console.write(line.getBytes());
+                            console.write((line + "\n").getBytes());
                             console.flush();
                         }
                     return;
