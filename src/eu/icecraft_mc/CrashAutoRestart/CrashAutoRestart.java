@@ -15,7 +15,7 @@ public class CrashAutoRestart extends Module {
 
     @Override
     public void onStderrString(String err) {
-        String noTimestamp = err.replaceFirst(".*\\[", "[");
+        String noTimestamp = err.replaceFirst(".*?\\[", "[");
         if (!noTimestamp.startsWith("[SEVERE] ")) return;
         if (noTimestamp.startsWith("[SEVERE] Encountered an unexpected exception ")) {
             System.err.println("Restarting due to server crash");
